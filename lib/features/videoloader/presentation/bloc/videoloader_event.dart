@@ -22,7 +22,7 @@ class PlayVideoEvent extends VideoloaderEvent {
 
 class PlayOneTimerEvent extends VideoloaderEvent {
   final VideoEntities videoEntities;
-  final int repeat;
+  final String runTime;
 
-  PlayOneTimerEvent(this.videoEntities, this.repeat);
+  const PlayOneTimerEvent({required this.videoEntities, required this.runTime});
 }

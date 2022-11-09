@@ -1,22 +1,24 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/src/foundation/key.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:video_player/video_player.dart';
 
 class VideoWidget extends StatefulWidget {
   final VideoPlayerController videoPlayerController;
   final String videoname;
   final String videoext;
-  final int repeatvalue;
-  final int duration;
-  const VideoWidget(
-      {Key? key,
-      required this.videoPlayerController,
-      required this.videoname,
-      required this.videoext,
-      required this.repeatvalue,
-      required this.duration})
-      : super(key: key);
+  final int repeatValue;
+  final String? datetime;
+  final bool oneTimevideo;
+  final int totalrepeat;
+  const VideoWidget({
+    Key? key,
+    required this.videoPlayerController,
+    required this.videoname,
+    required this.videoext,
+    required this.repeatValue,
+    required this.oneTimevideo,
+    this.datetime,
+    required this.totalrepeat,
+  }) : super(key: key);
 
   @override
   State<VideoWidget> createState() => _VideoWidgetState();
@@ -33,13 +35,13 @@ class _VideoWidgetState extends State<VideoWidget> {
                 padding: const EdgeInsets.all(10.0),
                 child: SizedBox(
                   height: 250,
-                  child: VideoPlayer(videoPlayerController),
+                  child: VideoPlayer(widget.videoPlayerController),
                 ),
               ),
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Text(
-                  "Title: ${state.filedetail.videoname}${state.filedetail.videoext}",
+                  "Title: ${widget.videoname}${widget.videoext}",
                   style: const TextStyle(
                       fontSize: 15, fontWeight: FontWeight.bold),
                 ),
@@ -47,7 +49,7 @@ class _VideoWidgetState extends State<VideoWidget> {
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Text(
-                  "Repeat Value: ${state.repeatvalue}",
+                  "Repeat Value: ${widget.repeatValue}",
                   style: const TextStyle(
                       fontSize: 15, fontWeight: FontWeight.bold),
                 ),
@@ -55,7 +57,7 @@ class _VideoWidgetState extends State<VideoWidget> {
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Text(
-                  "Video should paly in One round: ${state.filedetail.repeatValue / 5} time",
+                  "Video should paly in One round: ${widget.totalrepeat / 5} time",
                   style: const TextStyle(
                       fontSize: 15, fontWeight: FontWeight.bold),
                 ),
@@ -63,7 +65,7 @@ class _VideoWidgetState extends State<VideoWidget> {
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Text(
-                  "Total video played: ${(state.filedetail.repeatValue - state.repeatvalue) / 5} time ",
+                  "Total video played: ${(widget.totalrepeat - widget.repeatValue) / 5} time ",
                   style: const TextStyle(
                       fontSize: 15, fontWeight: FontWeight.bold),
                 ),
@@ -71,11 +73,21 @@ class _VideoWidgetState extends State<VideoWidget> {
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Text(
-                  "Is one timer video:${state.filedetail.videoplaytime!.isEmpty ? " false" : state.filedetail.videoplaytime}",
+                  "Is one timer video: ${widget.datetime}",
                   style: const TextStyle(
                       fontSize: 15, fontWeight: FontWeight.bold),
                 ),
-              )
+              ),
+              widget.oneTimevideo
+                  ? const Padding(
+                      padding: EdgeInsets.all(8.0),
+                      child: Text(
+                        "oneTimer Vidoe",
+                        style: TextStyle(
+                            fontSize: 15, fontWeight: FontWeight.bold),
+                      ),
+                    )
+                  : const SizedBox()
             ],
           )
         : const Center(

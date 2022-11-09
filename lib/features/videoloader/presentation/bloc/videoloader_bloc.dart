@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:videorender/features/videoloader/data/models/video_data_model.dart';
 import 'package:videorender/features/videoloader/domain/entities/video_entities.dart';
 import 'package:videorender/features/videoloader/domain/repositories/video_repo.dart';
@@ -22,6 +23,16 @@ class VideoloaderBloc extends Bloc<VideoloaderEvent, VideoloaderState> {
   VideoloaderBloc() : super(VideoloaderInitial()) {
     on<LoadVideoDataEvent>(onLoadVideoDataEvent);
     on<PlayVideoEvent>(_onPlayVideoEvent);
+    on<PlayOneTimerEvent>(
+      (event, emit) {
+        emit(
+          OneTimerVideoLoaded(
+            fileDetail: event.videoEntities,
+            runTime: event.runTime,
+          ),
+        );
+      },
+    );
   }
 
   Future<void> onLoadVideoDataEvent(
@@ -35,7 +46,10 @@ class VideoloaderBloc extends Bloc<VideoloaderEvent, VideoloaderState> {
 
     VideoEnitiesList videoEnitiesList =
         await getVideoFromDirectories.returnVideostoUI();
-    //print(videoEnitiesList.videoDataList);
+
+    // obj of vidoedatastream
+
+    // checking ontime vidoe
 
     if (videoEnitiesList.videoDataList.isNotEmpty) {
       try {
@@ -55,6 +69,14 @@ class VideoloaderBloc extends Bloc<VideoloaderEvent, VideoloaderState> {
                 "isRunning": false
               });
               totalrepeat += ele.repeatValue;
+            } else {
+              //instance of videoDataStream class.
+              VidoeDataStream vidoeDataStream = VidoeDataStream(
+                  videoEntitieswithdate: ele,
+                  videoloaderBloc: event.videoloaderBloc);
+              //injecting one time video listener.
+
+              vidoeDataStream.checkvidoeTime();
             }
           }
           int totallooping = totalrepeat ~/ 5;
@@ -124,13 +146,6 @@ class VideoloaderBloc extends Bloc<VideoloaderEvent, VideoloaderState> {
   }
 }
 
-class VideoDataStream {
-  final VideoEnitiesList videoEnitiesList;
-  final VideoloaderBloc videoloaderBloc;
-
-  VideoDataStream(this.videoEnitiesList, this.videoloaderBloc);
-}
-
 class VidoeDataStream {
   final VideoEntities videoEntitieswithdate;
   final VideoloaderBloc videoloaderBloc;
@@ -138,12 +153,41 @@ class VidoeDataStream {
   VidoeDataStream(
       {required this.videoEntitieswithdate, required this.videoloaderBloc});
 
+  final videostreamController = StreamController<int>();
+
   Stream<int> videosstream() {
-    return Stream.periodic(Duration(seconds: 1), (time) => time).timeout(
-      const Duration(seconds: 1),
-      onTimeout: (sink) {
-        videoloaderBloc.add(const VideoloaderEvent());I
-      },
-    );
+    Stream<int>? timestream;
+
+    timestream = Stream.periodic(const Duration(seconds: 1), (time) => time);
+
+    return timestream;
+  }
+
+  void checkvidoeTime() {
+    late StreamSubscription streamSubscription;
+    DateTime dateTime =
+        DateTime.parse(videoEntitieswithdate.videoplaytime.toString());
+
+    log("vidoe  duration:  $dateTime");
+
+    streamSubscription = videosstream().listen((event) {
+      log(event.toString());
+      log(dateTime.toString());
+
+      DateTime now = DateTime.now().toLocal();
+      log("now" + now.toString());
+      if (now.year == dateTime.year &&
+          dateTime.day == now.day &&
+          dateTime.hour == now.hour &&
+          dateTime.minute == now.minute) {
+        log("date time of video mathced ");
+        videoloaderBloc.add(PlayOneTimerEvent(
+            videoEntities: videoEntitieswithdate,
+            runTime: dateTime.toString()));
+        streamSubscription.cancel();
+      } else {
+        log("not date time of video mathced");
+      }
+    });
   }
 }

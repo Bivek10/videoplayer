@@ -31,5 +31,5 @@ class OneTimerVideoLoaded extends VideoloaderState {
   final VideoEntities fileDetail;
   final String runTime;
 
-  OneTimerVideoLoaded(this.fileDetail, this.runTime);
+  const OneTimerVideoLoaded({required this.fileDetail, required this.runTime});
 }

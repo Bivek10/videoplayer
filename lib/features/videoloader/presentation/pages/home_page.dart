@@ -1,8 +1,11 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:video_player/video_player.dart';
 import 'package:videorender/features/videoloader/presentation/bloc/videoloader_bloc.dart';
+import 'package:videorender/features/videoloader/presentation/widgets/video_widget.dart';
 
 import '../../../../core/functions/video_initializer.dart';
 
@@ -15,6 +18,9 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   late VideoPlayerController videoPlayerController;
+
+  late VideoPlayerController oneTimerVideoController;
+
   late VideoloaderBloc videoloaderBloc;
   int totalvideoload = 0;
   @override
@@ -48,10 +54,20 @@ class _HomePageState extends State<HomePage> {
       body: BlocConsumer<VideoloaderBloc, VideoloaderState>(
         bloc: videoloaderBloc,
         builder: ((context, state) {
-          //print(state);
+          log(state.toString());
           if (state is VideoDataLoadedState) {
-            totalvideoload += 1;
+            return VideoWidget(
+              videoPlayerController: videoPlayerController,
+              videoname: state.filedetail.videoname,
+              videoext: state.filedetail.videoext,
+              repeatValue: state.repeatvalue,
+              datetime: "false",
+              totalrepeat: state.filedetail.repeatValue,
+              oneTimevideo: false,
+            );
+            /*
             return videoPlayerController.value.isInitialized
+            
                 ? Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -114,6 +130,18 @@ class _HomePageState extends State<HomePage> {
                       ),
                     ),
                   );
+                  */
+          }
+          if (state is OneTimerVideoLoaded) {
+            return VideoWidget(
+              videoPlayerController: videoPlayerController,
+              videoname: state.fileDetail.videoname,
+              videoext: state.fileDetail.videoext,
+              datetime: state.fileDetail.videoplaytime,
+              repeatValue: 5,
+              totalrepeat: 5,
+              oneTimevideo: true,
+            );
           }
 
           if (state is VideoErrorState) {
@@ -132,11 +160,20 @@ class _HomePageState extends State<HomePage> {
             ),
           );
         }),
-        listener: (context, state) {
+        listener: (context, state) async {
           if (state is VideoDataLoadedState) {
             runVideo(
                 videoname:
                     "assets/${state.filedetail.videoname}${state.filedetail.videoext}");
+          }
+
+          if (state is OneTimerVideoLoaded) {
+            log("on one Timer vidoe state");
+            await videoPlayerController.dispose();
+            //runVideo(videoname: videoname)
+            runVideo(
+                videoname:
+                    "assets/${state.fileDetail.videoname}${state.fileDetail.videoext}");
           }
         },
       ),
@@ -159,8 +196,18 @@ class _HomePageState extends State<HomePage> {
         });
       });
     videoPlayerController.play();
+  }
 
-    //videoPlayerController.pause();
-    //videoPlayerController.setLooping(true);
+  void oneTimeVideo({required videoname}) {
+    VideoInitializer.setVideo(videoname);
+    oneTimerVideoController = VideoInitializer.videoController
+      ..initialize().then((value) {
+        setState(() {
+          value;
+        });
+      });
+    oneTimerVideoController.play();
+    oneTimerVideoController.pause();
+    oneTimerVideoController.dispose();
   }
 }
