@@ -16,6 +16,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   late VideoPlayerController videoPlayerController;
   late VideoloaderBloc videoloaderBloc;
+  int totalvideoload = 0;
   @override
   void initState() {
     super.initState();
@@ -24,9 +25,7 @@ class _HomePageState extends State<HomePage> {
 
   tiggerLoadVideoEvent() {
     videoloaderBloc = VideoloaderBloc();
-    videoloaderBloc.add(
-      GetandLoadVideoEvent(),
-    );
+    videoloaderBloc.add(LoadVideoDataEvent(videoloaderBloc));
   }
 
   @override
@@ -49,7 +48,9 @@ class _HomePageState extends State<HomePage> {
       body: BlocConsumer<VideoloaderBloc, VideoloaderState>(
         bloc: videoloaderBloc,
         builder: ((context, state) {
-          if (state is VideoLoadedState) {
+          //print(state);
+          if (state is VideoDataLoadedState) {
+            totalvideoload += 1;
             return videoPlayerController.value.isInitialized
                 ? Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -57,17 +58,64 @@ class _HomePageState extends State<HomePage> {
                       Padding(
                         padding: const EdgeInsets.all(10.0),
                         child: SizedBox(
-                            height: 250,
-                            child: VideoPlayer(videoPlayerController)),
+                          height: 250,
+                          child: VideoPlayer(videoPlayerController),
+                        ),
                       ),
-                      Text(
-                          "Title: ${state.filedetail.videoname}${state.filedetail.videoext} ")
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(
+                          "Title: ${state.filedetail.videoname}${state.filedetail.videoext}",
+                          style: const TextStyle(
+                              fontSize: 15, fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(
+                          "Repeat Value: ${state.repeatvalue}",
+                          style: const TextStyle(
+                              fontSize: 15, fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(
+                          "Video should paly in One round: ${state.filedetail.repeatValue / 5} time",
+                          style: const TextStyle(
+                              fontSize: 15, fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(
+                          "Total video played: ${(state.filedetail.repeatValue - state.repeatvalue) / 5} time ",
+                          style: const TextStyle(
+                              fontSize: 15, fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(
+                          "Is one timer video:${state.filedetail.videoplaytime!.isEmpty ? " false" : state.filedetail.videoplaytime}",
+                          style: const TextStyle(
+                              fontSize: 15, fontWeight: FontWeight.bold),
+                        ),
+                      )
                     ],
                   )
                 : const Center(
-                    child: Text("Video not loaded"),
+                    child: SizedBox(
+                      width: 50,
+                      child: LinearProgressIndicator(
+                        backgroundColor: Color.fromARGB(255, 245, 240, 240),
+                        valueColor: AlwaysStoppedAnimation(Colors.green),
+                        minHeight: 5,
+                      ),
+                    ),
                   );
           }
+
           if (state is VideoErrorState) {
             return const Center(
               child: Text("Error...."),
@@ -85,7 +133,7 @@ class _HomePageState extends State<HomePage> {
           );
         }),
         listener: (context, state) {
-          if (state is VideoLoadedState) {
+          if (state is VideoDataLoadedState) {
             runVideo(
                 videoname:
                     "assets/${state.filedetail.videoname}${state.filedetail.videoext}");
@@ -111,5 +159,8 @@ class _HomePageState extends State<HomePage> {
         });
       });
     videoPlayerController.play();
+
+    //videoPlayerController.pause();
+    //videoPlayerController.setLooping(true);
   }
 }

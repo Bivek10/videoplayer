@@ -2,26 +2,30 @@
     {
         "name":"xyz",
         "ext":".mp4",
-        "repeat":50,
-        "time":""
+        "repeat":15,
+        "time":"",
+        "duration":10
     },
     {
         "name":"abc",
         "ext":".mp4",
         "repeat":10,
+        "duration":10,
         "time":""
     }
     ,
     {
-        "name":"prq",
+        "name":"pqr",
         "ext":".mp4",
         "repeat":5,
+        "duration":10,
         "time":""
     },
     {
         "name":"timervideo",
         "ext":".mp4",
         "repeat":5,
+        "duration":10,
         "time":"2022-11-01T23:28:56.782Z"
     }
 ]

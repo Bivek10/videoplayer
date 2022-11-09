@@ -26,22 +26,9 @@ as per requirements
 2 played = 5 * 2 repeat.
 10 played = 5 * 10 repeat.
 
-// check one timer video.
 
 
-Algorithm define to meet requirments.
-1.  start
-2.  check time of timer video.
-3.  Listen time of timer video. // stream listener.
-4.  If Listen true:
-5.  Stop currenlty running video. 
-6.  Played the timer video.
-7.  Restart currently runninv video.
-8.  If Listen false:
-9.  Check lowest repeat video value.
-10. Cacaluate the video palyed value of all video.  on the basis of lowest repeat video..
-11. set the number of video played value for one complete looping of all video list. 
-12. 
+
 
 
 

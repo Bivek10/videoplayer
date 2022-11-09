@@ -9,13 +9,13 @@ abstract class VideoloaderState extends Equatable {
 
 class VideoloaderInitial extends VideoloaderState {}
 
-class VideoLoadedState extends VideoloaderState {
+class VideoDataLoadedState extends VideoloaderState {
   final VideoEntities filedetail;
-
-  const VideoLoadedState({required this.filedetail});
-
+  final int repeatvalue;
+  const VideoDataLoadedState(
+      {required this.filedetail, required this.repeatvalue});
   @override
-  List<Object> get props => [filedetail];
+  List<Object> get props => [filedetail, repeatvalue];
 }
 
 class VideoErrorState extends VideoloaderState {
@@ -25,4 +25,11 @@ class VideoErrorState extends VideoloaderState {
 
   @override
   List<Object> get props => [error];
+}
+
+class OneTimerVideoLoaded extends VideoloaderState {
+  final VideoEntities fileDetail;
+  final String runTime;
+
+  OneTimerVideoLoaded(this.fileDetail, this.runTime);
 }

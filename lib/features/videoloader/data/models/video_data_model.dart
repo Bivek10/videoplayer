@@ -5,19 +5,23 @@ class VideoDataModel extends VideoEntities {
     required String videoname,
     required String videoext,
     required int repeatValue,
+    required int videoDuration,
     String? videoPlayTime,
   }) : super(
-            repeatValue: repeatValue,
-            videoname: videoname,
-            videoext: videoext,
-            videoplaytime: videoPlayTime);
+          repeatValue: repeatValue,
+          videoname: videoname,
+          videoext: videoext,
+          videoplaytime: videoPlayTime,
+          videoduration: videoDuration,
+        );
 
   factory VideoDataModel.fromJson({required Map<String, dynamic> videojson}) {
     return VideoDataModel(
         videoname: videojson["name"],
         videoext: videojson["ext"],
         repeatValue: videojson["repeat"],
-        videoPlayTime: videojson["time"]);
+        videoPlayTime: videojson["time"],
+        videoDuration: videojson["duration"]);
   }
 
   Map<String, dynamic> toJson() {
@@ -26,6 +30,7 @@ class VideoDataModel extends VideoEntities {
       'ext': videoext,
       'repeat': videoplaytime,
       'time': videoplaytime,
+      "duration": videoduration,
     };
   }
 }
@@ -43,7 +48,8 @@ class VideoModelList extends VideoEnitiesList {
           videoname: element["name"],
           videoext: element["ext"],
           repeatValue: element["repeat"],
-          videoPlayTime: element["time"]);
+          videoPlayTime: element["time"],
+          videoDuration: element["duration"]);
       videoData.add(videoDataModel);
     }
     return VideoModelList(videoData);
