@@ -2,7 +2,7 @@
     {
         "name":"xyz",
         "ext":".mp4",
-        "repeat":15,
+        "repeat":50,
         "time":"",
         "duration":10
     },
@@ -26,6 +26,6 @@
         "ext":".mp4",
         "repeat":5,
         "duration":10,
-        "time":"2022-11-10T04:35:00"
+        "time":"2022-11-10T12:15:00"
     }
 ]
